@@ -1,0 +1,40 @@
+{%extends "base.html"%}
+{% load staticfiles %}
+{% block content %}
+	
+	<ul class="rooms">
+		<!-- if there were any rooms available, show them in a list. -->
+		{% for room in rooms %}
+			<li class="room-link" data-room-id="{{ room.id }}">{{ room }}</li>
+		<!-- if there were no rooms available, you might add one from the admin site. -->
+		{% empty %}
+			<P class="empty">No Chat rooms defined. Maybe make some in the <a href="{% url 'admin:index'%}">admin</a>?</P>
+		{% endfor %}
+
+	</ul>
+
+	<div id="chats">
+		
+	</div>
+
+{%endblock%}
+{% block extra_body %}
+<script>
+	    $(function () {
+	    // Correctly decide between ws:// and wss://
+	    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+	    var ws_path = ws_scheme + '://' + window.location.host + "/chat/stream/";
+	    var socket = new ReconnectingWebSocket(ws_path);
+	    
+	    console.log("Connecting to " + ws_path);
+    	var socket = new ReconnectingWebSocket(ws_path);
+	    socket.onopen = function () {
+	        console.log("Connected to chat socket");
+	    };
+	    socket.onclose = function () {
+	        console.log("Disconnected from chat socket");
+	    }
+	});
+
+  	</script>
+{% endblock %}
